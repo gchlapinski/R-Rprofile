@@ -44,23 +44,6 @@ gcsetwd <- function() {
   setwd(paste("C:/Users/", Sys.info()["login"], "/Desktop/Rrroboczy", sep=""))  
 }
 
-gcstat <- function(n=0) {
-  if (n > 0) {
-    newTime <- proc.time()
-    elapsed <- newTime[3] - .cpuTime[3]
-    .cpuTime <<- newTime
-  } else {
-    .cpuTime <<- proc.time()
-    elapsed <- NA
-  }
-
-  cat(paste("point: ", n, ", used memory: ", memory.size(), 
-    "Mb, percent used: ", 
-    format(round(memory.size()/memory.size(max=TRUE), 2), nsmall=2), 
-    "%, elapsed time: ", ifelse(is.na(elapsed), "-", round(elapsed,2)), 
-    "[s]\n", sep=""))
-}
-
 gcrm <- function() {
   rm(list=setdiff(ls(all.names=TRUE, envir=.GlobalEnv), ".trPaths"), envir=.GlobalEnv)
   gc(FALSE)
@@ -96,9 +79,4 @@ gcisna <- function(x, xSubst) {
   x[is.na(x)] <- xSubst
   
   x
-}
-
-gcHi <- function(n) {
-  cat("Przygotowa³: Grzegorz Ch³apiñski\n")
-  cat(paste0("Wyk³ad: ", n, "\n"))
 }
