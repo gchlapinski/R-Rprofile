@@ -1,0 +1,104 @@
+# Things you might want to change
+
+# options(papersize="a4")
+# options(editor="notepad")
+# options(pager="internal")
+
+# set the default help type
+# options(help_type="text")
+  options(help_type="html")
+
+# set a site library
+# .Library.site <- file.path(chartr("\\", "/", R.home()), "site-library")
+
+# set a CRAN mirror
+# local({r <- getOption("repos")
+#       r["CRAN"] <- "http://my.local.cran"
+#       options(repos=r)})
+
+# Give a fortune cookie, but only to interactive sessions
+# (This would need the fortunes package to be installed.)
+#  if (interactive()) 
+#    fortunes::fortune()
+
+options(repos="http://cran.at.r-project.org/")
+options(prompt="zzz... ")
+options(continue="... ")
+options(stringsAsFactors=FALSE)
+
+.First <- function() {
+#  print(fortunes::fortune())
+  .libPaths(.libPaths()[2])
+}
+
+#.Last <- function() {
+#  cat(paste("Good bye Patus...", "\n", date(), sep=""))
+#}
+
+utils::assignInNamespace("q", 
+  function(save="no", status=0, runLast=TRUE) {
+    .Internal(quit(save, status, runLast))
+  }, "base")
+
+gcsetwd <- function() {
+  setwd(paste("C:/Users/", Sys.info()["login"], "/Desktop/Rrroboczy", sep=""))  
+}
+
+gcstat <- function(n=0) {
+  if (n > 0) {
+    newTime <- proc.time()
+    elapsed <- newTime[3] - .cpuTime[3]
+    .cpuTime <<- newTime
+  } else {
+    .cpuTime <<- proc.time()
+    elapsed <- NA
+  }
+
+  cat(paste("point: ", n, ", used memory: ", memory.size(), 
+    "Mb, percent used: ", 
+    format(round(memory.size()/memory.size(max=TRUE), 2), nsmall=2), 
+    "%, elapsed time: ", ifelse(is.na(elapsed), "-", round(elapsed,2)), 
+    "[s]\n", sep=""))
+}
+
+gcrm <- function() {
+  rm(list=setdiff(ls(all.names=TRUE, envir=.GlobalEnv), ".trPaths"), envir=.GlobalEnv)
+  gc(FALSE)
+
+  invisible()
+}
+
+gcls <- function(woFun=FALSE, all.names=FALSE) {
+  l <- ls(envir=.GlobalEnv, all.names=all.names)
+  
+  if (length(l) > 0) {
+    l <- data.frame(Class=unlist(lapply(l, function(x) class(get(x))[1])),
+           DimLength=unlist(lapply(l, function(x) ifelse(
+             class(get(x))[1] %in% c("character",
+             "numeric", "integer", "double", "matrix", 
+             "list", "data.frame", "data.table"), ifelse(is.null(dim(get(x))), 
+               as.character(length(get(x))), 
+                 paste(as.character(dim(get(x))[1]), 
+                   as.character(dim(get(x))[2]), sep=" x " )), "-"))),
+      row.names=l
+    )
+    if (woFun) {
+      l[which(l$Class != "function"), ] 
+    } else {
+      l
+    }    
+  } else {
+    l
+  }
+}
+
+gcisna <- function(x, xSubst) {
+  x[is.na(x)] <- xSubst
+  
+  x
+}
+
+gcHi <- function(n) {
+  cat("Przygotowa³: Grzegorz Ch³apiñski\n")
+  cat(paste0("Wyk³ad: ", n, "\n"))
+}
